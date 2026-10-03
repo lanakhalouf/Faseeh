@@ -1,246 +1,224 @@
 /* =========================================
-   FASEEH
-   Main Application
+   FASEEH APP
 ========================================= */
 
 
 /* =========================================
-   DATA
+   USER DATA
 ========================================= */
 
-const defaultUser = {
+let userData = JSON.parse(localStorage.getItem("faseehUser")) || {
+
     xp: 0,
+
     streak: 0,
+
     level: 1,
+
     plan: "Basic",
 
     surveyCompleted: false,
+
+    language: "en",
 
     profile: {
         background: "",
         education: "",
         level: "",
-        goals: []
-    },
+        skills: []
+    }
 
-    completedLessons: []
-};
-
-
-let user = JSON.parse(
-    localStorage.getItem("faseehUser")
-) || defaultUser;
-
-
-let surveyStep = 1;
-
-
-let surveyAnswers = {
-    background: "",
-    education: "",
-    level: "",
-    goals: []
 };
 
 
 /* =========================================
-   STORAGE
+   LANGUAGE
 ========================================= */
 
-function saveUser() {
+let language = userData.language || "en";
 
-    localStorage.setItem(
-        "faseehUser",
-        JSON.stringify(user)
+
+function setLanguage(newLanguage) {
+
+    /*
+        Arab users:
+        Arabic only.
+
+        Non-Arab users:
+        English + Arabic.
+    */
+
+    if (
+        userData.profile.background === "arab" &&
+        newLanguage === "en"
+    ) {
+        newLanguage = "ar";
+    }
+
+    language = newLanguage;
+
+    userData.language = language;
+
+    saveUser();
+
+    document.documentElement.lang = language;
+
+    document.body.classList.toggle(
+        "rtl",
+        language === "ar"
     );
+
+    updateText();
+
+    updateLanguageButtons();
+
+    createLearningPath();
+
+    updateStats();
+
 }
 
 
-/* =========================================
-   TOAST
-========================================= */
+function updateText() {
 
-function showToast(message) {
+    document
+        .querySelectorAll("[data-en][data-ar]")
+        .forEach(element => {
 
-    const toast =
-        document.getElementById("toast");
+            element.textContent =
+                language === "ar"
+                    ? element.getAttribute("data-ar")
+                    : element.getAttribute("data-en");
 
-    toast.textContent = message;
+        });
 
-    toast.classList.add("show");
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2500);
 }
 
 
-/* =========================================
-   STREAK
-========================================= */
+function updateLanguageButtons() {
 
-function updateStreak() {
+    const languageButton =
+        document.getElementById("languageButton");
 
-    const today =
-        new Date().toDateString();
-
-    const lastVisit =
-        localStorage.getItem("faseehLastVisit");
+    const topLanguage =
+        document.getElementById("topLanguage");
 
 
-    if (!lastVisit) {
+    /*
+        Arab users cannot switch to English.
+    */
 
-        user.streak = 1;
+    if (
+        userData.profile.background === "arab"
+    ) {
 
-        localStorage.setItem(
-            "faseehLastVisit",
-            today
-        );
+        if (languageButton) {
+            languageButton.style.display = "none";
+        }
 
-        saveUser();
+        if (topLanguage) {
+            topLanguage.style.display = "none";
+        }
 
         return;
     }
 
 
-    if (lastVisit !== today) {
+    if (languageButton) {
 
-        user.streak++;
+        languageButton.textContent =
+            language === "ar"
+                ? "English"
+                : "العربية";
 
-        localStorage.setItem(
-            "faseehLastVisit",
-            today
-        );
-
-        saveUser();
     }
+
+
+    if (topLanguage) {
+
+        topLanguage.textContent =
+            language === "ar"
+                ? "English"
+                : "العربية";
+
+    }
+
 }
 
 
 /* =========================================
-   LEVEL
+   LANGUAGE BUTTONS
 ========================================= */
 
-function calculateLevel() {
+function toggleLanguage() {
 
-    user.level =
-        Math.floor(user.xp / 500) + 1;
+    if (
+        userData.profile.background === "arab"
+    ) {
+
+        setLanguage("ar");
+
+        return;
+    }
+
+
+    setLanguage(
+        language === "en"
+            ? "ar"
+            : "en"
+    );
+
 }
+
+
+document
+    .getElementById("languageButton")
+    ?.addEventListener(
+        "click",
+        toggleLanguage
+    );
+
+
+document
+    .getElementById("topLanguage")
+    ?.addEventListener(
+        "click",
+        toggleLanguage
+    );
 
 
 /* =========================================
-   ONBOARDING
+   SURVEY
 ========================================= */
 
-function setupSurvey() {
-
-    const choices =
-        document.querySelectorAll(".choice");
+let currentStep = 1;
 
 
-    choices.forEach(choice => {
+let surveyAnswers = {
 
-        choice.addEventListener("click", () => {
+    background: "",
 
-            const question =
-                choice.dataset.question;
+    education: "",
 
-            const value =
-                choice.dataset.value;
+    level: "",
 
+    skills: []
 
-            surveyAnswers[question] =
-                value;
+};
 
 
-            document
-                .querySelectorAll(
-                    `.choice[data-question="${question}"]`
-                )
-                .forEach(item => {
-                    item.classList.remove("selected");
-                });
+function showSurveyStep(step) {
 
+    currentStep = step;
 
-            choice.classList.add("selected");
-
-
-            setTimeout(() => {
-
-                if (surveyStep < 4) {
-
-                    surveyStep++;
-
-                    showSurveyStep();
-
-                }
-
-            }, 250);
-
-        });
-
-    });
-
-
-    document
-        .querySelectorAll(".goal")
-        .forEach(goal => {
-
-            goal.addEventListener("click", () => {
-
-                const value =
-                    goal.dataset.goal;
-
-
-                goal.classList.toggle("selected");
-
-
-                if (
-                    surveyAnswers.goals.includes(value)
-                ) {
-
-                    surveyAnswers.goals =
-                        surveyAnswers.goals.filter(
-                            item => item !== value
-                        );
-
-                } else {
-
-                    surveyAnswers.goals.push(value);
-
-                }
-
-            });
-
-        });
-
-
-    document
-        .getElementById("backButton")
-        .addEventListener(
-            "click",
-            previousSurveyStep
-        );
-
-
-    document
-        .getElementById("finishSurvey")
-        .addEventListener(
-            "click",
-            finishSurvey
-        );
-}
-
-
-function showSurveyStep() {
 
     document
         .querySelectorAll(".survey-step")
-        .forEach(step => {
+        .forEach(section => {
 
-            step.classList.toggle(
+            section.classList.toggle(
                 "active",
-                Number(step.dataset.step) === surveyStep
+                Number(section.dataset.step) === step
             );
 
         });
@@ -249,228 +227,163 @@ function showSurveyStep() {
     const progress =
         document.getElementById("progressBar");
 
-    progress.style.width =
-        `${surveyStep * 25}%`;
+    if (progress) {
+
+        progress.style.width =
+            `${step * 25}%`;
+
+    }
 
 
-    document
-        .getElementById("stepCounter")
-        .textContent =
-        `${surveyStep} of 4`;
+    const counter =
+        document.getElementById("stepCounter");
+
+    if (counter) {
+
+        counter.textContent =
+            `${step} of 4`;
+
+    }
 
 
-    document
-        .getElementById("backButton")
-        .classList.toggle(
+    const backButton =
+        document.getElementById("backButton");
+
+
+    if (backButton) {
+
+        backButton.classList.toggle(
             "hidden",
-            surveyStep === 1
-        );
-}
-
-
-function previousSurveyStep() {
-
-    if (surveyStep > 1) {
-
-        surveyStep--;
-
-        showSurveyStep();
-    }
-}
-
-
-function finishSurvey() {
-
-    if (!surveyAnswers.goals.length) {
-
-        showToast(
-            "Choose at least one learning goal."
+            step === 1
         );
 
-        return;
     }
 
-
-    user.profile = {
-        background: surveyAnswers.background,
-        education: surveyAnswers.education,
-        level: surveyAnswers.level,
-        goals: surveyAnswers.goals
-    };
-
-
-    user.surveyCompleted = true;
-
-
-    saveUser();
-
-
-    document
-        .getElementById("onboarding")
-        .classList.add("hidden");
-
-
-    document
-        .getElementById("app")
-        .classList.remove("hidden");
-
-
-    buildLearningPath();
-
-    updateInterface();
-
-    showPage("dashboard");
-
-    showToast(
-        "Your personalized learning path is ready!"
-    );
 }
 
 
 /* =========================================
-   LEARNING PATH
+   SURVEY CHOICES
 ========================================= */
 
-const lessonInfo = {
+document
+    .querySelectorAll(".choice")
+    .forEach(button => {
 
-    vocabulary: {
-        title: "Arabic Vocabulary",
-        description: "Build useful Arabic words and expressions.",
-        icon: "📚",
-        color: "purple"
-    },
+        button.addEventListener(
+            "click",
+            () => {
 
-    grammar: {
-        title: "Arabic Grammar",
-        description: "Understand Arabic grammar step by step.",
-        icon: "📝",
-        color: "blue"
-    },
+                const question =
+                    button.dataset.question;
 
-    speaking: {
-        title: "Speaking Practice",
-        description: "Practice useful Arabic conversations.",
-        icon: "🎤",
-        color: "green"
-    },
-
-    writing: {
-        title: "Arabic Writing",
-        description: "Improve your Arabic writing skills.",
-        icon: "✍️",
-        color: "orange"
-    },
-
-    reading: {
-        title: "Reading Practice",
-        description: "Read Arabic texts and understand them.",
-        icon: "📖",
-        color: "purple"
-    },
-
-    listening: {
-        title: "Listening Practice",
-        description: "Train your ear to understand Arabic.",
-        icon: "🎧",
-        color: "blue"
-    },
-
-    expression: {
-        title: "Arabic Expression",
-        description: "Learn how to express your ideas clearly.",
-        icon: "💬",
-        color: "green"
-    },
-
-    literature: {
-        title: "Arabic Literature",
-        description: "Explore Arabic texts, stories and poetry.",
-        icon: "📜",
-        color: "pink"
-    }
-
-};
+                const value =
+                    button.dataset.value;
 
 
-function getRecommendedGoals() {
+                document
+                    .querySelectorAll(
+                        `.choice[data-question="${question}"]`
+                    )
+                    .forEach(choice => {
 
-    const profile =
-        user.profile;
+                        choice.classList.remove(
+                            "selected"
+                        );
 
-
-    if (profile.goals && profile.goals.length) {
-        return profile.goals;
-    }
-
-
-    if (profile.level === "beginner") {
-
-        return [
-            "vocabulary",
-            "reading",
-            "speaking"
-        ];
-
-    }
+                    });
 
 
-    return [
-        "vocabulary",
-        "grammar",
-        "reading"
-    ];
-}
-
-
-function buildLearningPath() {
-
-    const goals =
-        getRecommendedGoals();
-
-
-    const dashboard =
-        document.getElementById(
-            "dashboardLessons"
-        );
-
-    const allLessons =
-        document.getElementById(
-            "allLessons"
-        );
-
-
-    dashboard.innerHTML = "";
-    allLessons.innerHTML = "";
-
-
-    goals.forEach(
-        (goal, index) => {
-
-            const info =
-                lessonInfo[goal];
-
-            if (!info) return;
-
-
-            const completed =
-                user.completedLessons.includes(goal);
-
-
-            const card =
-                createLessonCard(
-                    info,
-                    goal,
-                    index,
-                    completed
+                button.classList.add(
+                    "selected"
                 );
 
 
-            allLessons.appendChild(card.cloneNode(true));
+                surveyAnswers[question] =
+                    value;
 
 
-            if (index < 3) {
+                /*
+                    Automatically move forward.
+                */
 
-                dashboard.appendChild(card);
+                if (currentStep < 4) {
+
+                    setTimeout(() => {
+
+                        showSurveyStep(
+                            currentStep + 1
+                        );
+
+                    }, 220);
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   GOALS
+========================================= */
+
+document
+    .querySelectorAll(".goal")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                button.classList.toggle(
+                    "selected"
+                );
+
+
+                const goal =
+                    button.dataset.goal;
+
+
+                if (
+                    surveyAnswers.skills.includes(goal)
+                ) {
+
+                    surveyAnswers.skills =
+                        surveyAnswers.skills.filter(
+                            item => item !== goal
+                        );
+
+                } else {
+
+                    surveyAnswers.skills.push(
+                        goal
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+document
+    .getElementById("backButton")
+    ?.addEventListener(
+        "click",
+        () => {
+
+            if (currentStep > 1) {
+
+                showSurveyStep(
+                    currentStep - 1
+                );
 
             }
 
@@ -478,191 +391,143 @@ function buildLearningPath() {
     );
 
 
-    updateProgress();
-}
-
-
-function createLessonCard(
-    info,
-    goal,
-    index,
-    completed
-) {
-
-    const card =
-        document.createElement("article");
-
-
-    card.className =
-        "lesson-card";
-
-
-    card.innerHTML = `
-
-        <div class="lesson-cover ${info.color}">
-
-            <span class="lesson-emoji">
-                ${info.icon}
-            </span>
-
-            <span class="lesson-number">
-                LESSON ${index + 1}
-            </span>
-
-        </div>
-
-        <div class="lesson-body">
-
-            <span class="lesson-tag">
-                ${user.profile.level || "BEGINNER"}
-            </span>
-
-            <h3>
-                ${info.title}
-            </h3>
-
-            <p>
-                ${info.description}
-            </p>
-
-            <button
-                class="primary-button lesson-button"
-                data-lesson="${goal}"
-                ${completed ? "disabled" : ""}>
-
-                ${
-                    completed
-                    ? "✓ Completed"
-                    : "Start Lesson →"
-                }
-
-            </button>
-
-        </div>
-    `;
-
-
-    const button =
-        card.querySelector(
-            ".lesson-button"
-        );
-
-
-    if (!completed) {
-
-        button.addEventListener(
-            "click",
-            () => completeLesson(goal)
-        );
-
-    }
-
-
-    return card;
-}
-
-
 /* =========================================
-   COMPLETE LESSON
+   FINISH SURVEY
 ========================================= */
 
-function completeLesson(goal) {
+document
+    .getElementById("finishSurvey")
+    ?.addEventListener(
+        "click",
+        () => {
 
-    if (
-        user.completedLessons.includes(goal)
-    ) {
-        return;
-    }
+            if (!surveyAnswers.background) {
 
+                showToast(
+                    "Please complete the survey."
+                );
 
-    user.completedLessons.push(goal);
-
-    user.xp += 50;
-
-
-    calculateLevel();
-
-    saveUser();
-
-    buildLearningPath();
-
-    updateInterface();
+                return;
+            }
 
 
-    showToast(
-        "Great job! +50 XP ⭐"
-    );
-}
+            if (!surveyAnswers.education) {
+
+                showToast(
+                    "Please choose your education level."
+                );
+
+                return;
+            }
 
 
-/* =========================================
-   PROGRESS
-========================================= */
+            if (!surveyAnswers.level) {
 
-function updateProgress() {
+                showToast(
+                    "Please choose your Arabic level."
+                );
 
-    const goals =
-        getRecommendedGoals();
-
-
-    const completed =
-        goals.filter(goal =>
-            user.completedLessons.includes(goal)
-        ).length;
+                return;
+            }
 
 
-    const percentage =
-        goals.length
-            ? Math.round(
-                (completed / goals.length) * 100
-            )
-            : 0;
+            if (
+                surveyAnswers.skills.length === 0
+            ) {
+
+                showToast(
+                    "Choose at least one learning goal."
+                );
+
+                return;
+            }
 
 
-    document
-        .getElementById("dashboardProgress")
-        .textContent =
-        `${percentage}%`;
+            userData.profile = {
+
+                background:
+                    surveyAnswers.background,
+
+                education:
+                    surveyAnswers.education,
+
+                level:
+                    surveyAnswers.level,
+
+                skills:
+                    surveyAnswers.skills
+
+            };
 
 
-    document
-        .getElementById("learnProgressText")
-        .textContent =
-        `${percentage}% complete`;
+            userData.surveyCompleted = true;
 
 
-    document
-        .getElementById("learnProgressBar")
-        .style.width =
-        `${percentage}%`;
-}
+            /*
+                IMPORTANT:
+
+                Arab users automatically
+                receive Arabic-only interface.
+            */
+
+            if (
+                surveyAnswers.background === "arab"
+            ) {
+
+                language = "ar";
+
+            } else {
+
+                language = "en";
+
+            }
 
 
-/* =========================================
-   NAVIGATION
-========================================= */
+            userData.language =
+                language;
 
-function setupNavigation() {
 
-    document
-        .querySelectorAll("[data-page]")
-        .forEach(button => {
+            saveUser();
 
-            button.addEventListener(
-                "click",
-                () => {
 
-                    const page =
-                        button.dataset.page;
+            document
+                .getElementById("onboarding")
+                .classList.add("hidden");
 
-                    showPage(page);
 
-                }
+            document
+                .getElementById("app")
+                .classList.remove("hidden");
+
+
+            updateLanguageButtons();
+
+            updateText();
+
+            updateStats();
+
+            createLearningPath();
+
+            updateProfileGoals();
+
+            updatePersonalization();
+
+            showPage("dashboard");
+
+
+            showToast(
+                language === "ar"
+                    ? "تم إنشاء مسارك التعليمي! 🎉"
+                    : "Your personalized learning path is ready! 🎉"
             );
 
-        });
-}
+        }
+    );
 
+
+/* =========================================
+   PAGE NAVIGATION
+========================================= */
 
 function showPage(pageId) {
 
@@ -677,13 +542,13 @@ function showPage(pageId) {
         });
 
 
-    const target =
+    const page =
         document.getElementById(pageId);
 
 
-    if (target) {
+    if (page) {
 
-        target.classList.add(
+        page.classList.add(
             "active-page"
         );
 
@@ -692,395 +557,293 @@ function showPage(pageId) {
 
     document
         .querySelectorAll(".nav-item")
-        .forEach(nav => {
+        .forEach(button => {
 
-            nav.classList.toggle(
+            button.classList.toggle(
                 "active",
-                nav.dataset.page === pageId
+                button.dataset.page === pageId
             );
 
         });
 
 
-    const titles = {
-
-        dashboard: "Your Arabic journey",
-
-        learn: "Your Learning Path",
-
-        feed: "Short Lessons",
-
-        games: "Daily Games",
-
-        friends: "Friends",
-
-        profile: "Your Profile"
-
-    };
-
-
-    document
-        .getElementById("pageHeading")
-        .textContent =
-        titles[pageId] || "Faseeh";
+    updatePageHeading(pageId);
 
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
-}
-
-
-/* =========================================
-   INTERFACE
-========================================= */
-
-function updateInterface() {
-
-    calculateLevel();
-
-
-    const xp =
-        user.xp;
-
-    const streak =
-        user.streak;
-
-    const level =
-        user.level;
-
-
-    document
-        .getElementById("dashboardXP")
-        .textContent =
-        xp;
-
-
-    document
-        .getElementById("dashboardStreak")
-        .textContent =
-        streak;
-
-
-    document
-        .getElementById("dashboardLevel")
-        .textContent =
-        level;
-
-
-    document
-        .getElementById("sideStreak")
-        .textContent =
-        streak;
-
-
-    document
-        .getElementById("profileXP")
-        .textContent =
-        xp;
-
-
-    document
-        .getElementById("profileLevel")
-        .textContent =
-        level;
-
-
-    document
-        .getElementById("profileStreak")
-        .textContent =
-        streak;
-
-
-    document
-        .getElementById("friendXP")
-        .textContent =
-        `${xp} XP`;
-
-
-    document
-        .getElementById("friendStreak")
-        .textContent =
-        streak;
-
-
-    const goals =
-        user.profile.goals || [];
-
-
-    const profileGoals =
-        document.getElementById(
-            "profileGoals"
-        );
-
-
-    profileGoals.innerHTML = "";
-
-
-    if (!goals.length) {
-
-        profileGoals.innerHTML =
-            "<span>No goals selected yet.</span>";
-
-    } else {
-
-        goals.forEach(goal => {
-
-            const tag =
-                document.createElement("span");
-
-
-            tag.textContent =
-                goal.charAt(0).toUpperCase()
-                + goal.slice(1);
-
-
-            profileGoals.appendChild(tag);
-
-        });
-
-    }
-
-
-    const levelText =
-        user.profile.level
-            ? user.profile.level
-            : "beginner";
-
-
-    document
-        .getElementById("learningSubtitle")
-        .textContent =
-        `Your path is designed for your ${levelText} level and selected goals.`;
-}
-
-
-/* =========================================
-   GAMES
-========================================= */
-
-function setupGames() {
-
-    document
-        .querySelectorAll(".game-button")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    startGame(
-                        button.dataset.game
-                    );
-
-                }
-            );
-
-        });
 
 }
 
 
-function startGame(type) {
-
-    const area =
-        document.getElementById(
-            "gameArea"
-        );
-
-
-    area.classList.remove(
-        "hidden"
-    );
-
-
-    if (type === "word") {
-
-        area.innerHTML = `
-
-            <h2>🧩 Word Match</h2>
-
-            <p>What does <strong>كتاب</strong> mean?</p>
-
-            <button class="game-option" data-answer="wrong">
-                School
-            </button>
-
-            <button class="game-option" data-answer="correct">
-                Book
-            </button>
-
-            <button class="game-option" data-answer="wrong">
-                Pen
-            </button>
-
-        `;
-
-    }
-
-
-    if (type === "grammar") {
-
-        area.innerHTML = `
-
-            <h2>📝 Grammar Challenge</h2>
-
-            <p>Choose the correct sentence:</p>
-
-            <button class="game-option" data-answer="correct">
-                أنا أحب القراءة.
-            </button>
-
-            <button class="game-option" data-answer="wrong">
-                أنا يحب القراءة.
-            </button>
-
-            <button class="game-option" data-answer="wrong">
-                أنا تحب القراءة.
-            </button>
-
-        `;
-
-    }
-
-
-    if (type === "listening") {
-
-        area.innerHTML = `
-
-            <h2>🎧 Listening Challenge</h2>
-
-            <p>Imagine you hear: <strong>صباح الخير</strong></p>
-
-            <button class="game-option" data-answer="correct">
-                Good morning
-            </button>
-
-            <button class="game-option" data-answer="wrong">
-                Good night
-            </button>
-
-            <button class="game-option" data-answer="wrong">
-                Thank you
-            </button>
-
-        `;
-
-    }
-
-
-    area
-        .querySelectorAll(".game-option")
-        .forEach(option => {
-
-            option.addEventListener(
-                "click",
-                () => {
-
-                    if (
-                        option.dataset.answer ===
-                        "correct"
-                    ) {
-
-                        user.xp += 25;
-
-                        calculateLevel();
-
-                        saveUser();
-
-                        updateInterface();
-
-                        option.style.background =
-                            "#e6faf4";
-
-                        showToast(
-                            "Correct! +25 XP 🎉"
-                        );
-
-                    } else {
-
-                        option.style.background =
-                            "#ffecef";
-
-                        showToast(
-                            "Not quite — try again!"
-                        );
-
-                    }
-
-                }
-            );
-
-        });
-
-
-    area.scrollIntoView({
-        behavior: "smooth"
-    });
-}
-
-
-/* =========================================
-   AI TUTOR
-========================================= */
-
-function setupTutor() {
-
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
-
-    const send =
-        document.getElementById(
-            "sendMessage"
-        );
-
-
-    function sendMessage() {
-
-        const text =
-            input.value.trim();
-
-
-        if (!text) return;
-
-
-        addMessage(
-            text,
-            "user"
-        );
-
-
-        input.value = "";
-
-
-        setTimeout(() => {
-
-            addMessage(
-                getAIResponse(text),
-                "ai"
-            );
-
-        }, 600);
-
-    }
-
-
-    send.addEventListener(
+document
+    .addEventListener(
         "click",
-        sendMessage
-    );
-
-
-    input.addEventListener(
-        "keydown",
         event => {
 
-            if (event.key === "Enter") {
-                sendMessage();
+            const button =
+                event.target.closest(
+                    "[data-page]"
+                );
+
+
+            if (!button) return;
+
+
+            const page =
+                button.dataset.page;
+
+
+            if (page) {
+
+                showPage(page);
+
             }
+
+        }
+    );
+
+
+/* =========================================
+   PAGE HEADINGS
+========================================= */
+
+function updatePageHeading(page) {
+
+    const heading =
+        document.getElementById(
+            "pageHeading"
+        );
+
+
+    if (!heading) return;
+
+
+    const headings = {
+
+        dashboard: {
+            en: "Your Arabic journey",
+            ar: "رحلتك في اللغة العربية"
+        },
+
+        learn: {
+            en: "Your learning path",
+            ar: "مسارك التعليمي"
+        },
+
+        feed: {
+            en: "Short Arabic lessons",
+            ar: "دروس عربية قصيرة"
+        },
+
+        games: {
+            en: "Practice through games",
+            ar: "تعلّم من خلال الألعاب"
+        },
+
+        tutor: {
+            en: "Your Faseeh AI Tutor",
+            ar: "معلم فصيح الذكي"
+        },
+
+        friends: {
+            en: "Learn together",
+            ar: "تعلّموا معًا"
+        },
+
+        profile: {
+            en: "Your profile",
+            ar: "ملفك الشخصي"
+        }
+
+    };
+
+
+    const selected =
+        headings[page] ||
+        headings.dashboard;
+
+
+    heading.textContent =
+        selected[language];
+
+}
+
+
+/* =========================================
+   PERSONALIZED LEARNING
+========================================= */
+
+const lessonData = {
+
+    vocabulary: {
+        icon: "📚",
+        en: "Arabic Vocabulary",
+        ar: "المفردات العربية"
+    },
+
+    grammar: {
+        icon: "📝",
+        en: "Arabic Grammar",
+        ar: "القواعد العربية"
+    },
+
+    speaking: {
+        icon: "🎤",
+        en: "Speaking Practice",
+        ar: "تدريب المحادثة"
+    },
+
+    writing: {
+        icon: "✍️",
+        en: "Arabic Writing",
+        ar: "الكتابة العربية"
+    },
+
+    reading: {
+        icon: "📖",
+        en: "Reading Practice",
+        ar: "تدريب القراءة"
+    },
+
+    listening: {
+        icon: "🎧",
+        en: "Listening Practice",
+        ar: "تدريب الاستماع"
+    },
+
+    expression: {
+        icon: "💬",
+        en: "Arabic Expression",
+        ar: "التعبير العربي"
+    },
+
+    literature: {
+        icon: "📜",
+        en: "Arabic Literature",
+        ar: "الأدب العربي"
+    }
+
+};
+
+
+function createLearningPath() {
+
+    const dashboard =
+        document.getElementById(
+            "dashboardLessons"
+        );
+
+    const allLessons =
+        document.getElementById(
+            "allLessons"
+        );
+
+
+    if (!dashboard || !allLessons) return;
+
+
+    let skills =
+        userData.profile.skills;
+
+
+    if (
+        !skills ||
+        skills.length === 0
+    ) {
+
+        skills = [
+            "vocabulary",
+            "grammar",
+            "reading"
+        ];
+
+    }
+
+
+    dashboard.innerHTML = "";
+
+    allLessons.innerHTML = "";
+
+
+    skills.forEach(
+        (skill, index) => {
+
+            const lesson =
+                lessonData[skill];
+
+
+            if (!lesson) return;
+
+
+            const title =
+                language === "ar"
+                    ? lesson.ar
+                    : lesson.en;
+
+
+            const description =
+                getLessonDescription(
+                    skill
+                );
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "lesson-card";
+
+
+            card.innerHTML = `
+
+                <div class="lesson-cover">
+
+                    <span class="lesson-icon">
+                        ${lesson.icon}
+                    </span>
+
+                    <span class="lesson-number">
+                        LESSON ${index + 1}
+                    </span>
+
+                </div>
+
+                <div class="lesson-body">
+
+                    <h3>
+                        ${title}
+                    </h3>
+
+                    <p>
+                        ${description}
+                    </p>
+
+                    <button
+                        class="primary-button lesson-button"
+                        data-lesson="${skill}">
+                        ${language === "ar"
+                            ? "ابدأ الدرس ←"
+                            : "Start Lesson →"}
+                    </button>
+
+                </div>
+            `;
+
+
+            dashboard.appendChild(
+                card.cloneNode(true)
+            );
+
+
+            allLessons.appendChild(
+                card
+            );
 
         }
     );
@@ -1088,7 +851,7 @@ function setupTutor() {
 
     document
         .querySelectorAll(
-            ".quick-prompts button"
+            "[data-lesson]"
         )
         .forEach(button => {
 
@@ -1096,22 +859,481 @@ function setupTutor() {
                 "click",
                 () => {
 
-                    input.value =
-                        button.dataset.prompt;
-
-                    sendMessage();
+                    completeLesson();
 
                 }
             );
 
         });
+
+
+    const subtitle =
+        document.getElementById(
+            "learningSubtitle"
+        );
+
+
+    if (subtitle) {
+
+        subtitle.textContent =
+            language === "ar"
+                ? `مستواك الحالي: ${translateLevel(userData.profile.level)}`
+                : `Your current level: ${userData.profile.level}`;
+
+    }
+
 }
 
 
-function addMessage(
-    text,
-    type
-) {
+function getLessonDescription(skill) {
+
+    const level =
+        userData.profile.level ||
+        "beginner";
+
+
+    const descriptions = {
+
+        vocabulary: {
+            beginner: "Learn useful everyday Arabic words.",
+            intermediate: "Expand your Arabic vocabulary.",
+            advanced: "Master advanced Arabic vocabulary."
+        },
+
+        grammar: {
+            beginner: "Build your Arabic grammar foundation.",
+            intermediate: "Strengthen your grammar skills.",
+            advanced: "Challenge yourself with advanced grammar."
+        },
+
+        speaking: {
+            beginner: "Practice simple Arabic conversations.",
+            intermediate: "Speak with more confidence.",
+            advanced: "Improve natural Arabic expression."
+        },
+
+        writing: {
+            beginner: "Write simple Arabic sentences.",
+            intermediate: "Build stronger Arabic paragraphs.",
+            advanced: "Develop advanced Arabic writing."
+        },
+
+        reading: {
+            beginner: "Read simple Arabic texts.",
+            intermediate: "Understand longer Arabic texts.",
+            advanced: "Analyze advanced Arabic passages."
+        },
+
+        listening: {
+            beginner: "Train your ears with simple Arabic.",
+            intermediate: "Understand natural Arabic speech.",
+            advanced: "Challenge yourself with advanced listening."
+        },
+
+        expression: {
+            beginner: "Learn useful Arabic expressions.",
+            intermediate: "Use Arabic more naturally.",
+            advanced: "Master advanced expressions."
+        },
+
+        literature: {
+            beginner: "Discover simple Arabic texts.",
+            intermediate: "Explore Arabic literature.",
+            advanced: "Analyze advanced Arabic literature."
+        }
+
+    };
+
+
+    if (language === "ar") {
+
+        const arabicDescriptions = {
+
+            vocabulary: "تعلّم كلمات عربية مفيدة في حياتك اليومية.",
+
+            grammar: "ابنِ أساسًا قويًا في قواعد اللغة العربية.",
+
+            speaking: "تدرّب على المحادثة باللغة العربية.",
+
+            writing: "طوّر مهاراتك في الكتابة العربية.",
+
+            reading: "اقرأ نصوصًا عربية مناسبة لمستواك.",
+
+            listening: "درّب أذنك على فهم اللغة العربية.",
+
+            expression: "تعلّم التعبيرات العربية واستخدمها بشكل طبيعي.",
+
+            literature: "اكتشف الأدب العربي وطوّر فهمك للنصوص."
+
+        };
+
+
+        return arabicDescriptions[skill];
+
+    }
+
+
+    return descriptions[skill]?.[level]
+        || descriptions[skill]?.beginner
+        || "";
+
+}
+
+
+/* =========================================
+   LEVEL
+========================================= */
+
+function translateLevel(level) {
+
+    const levels = {
+
+        beginner: "مبتدئ",
+
+        intermediate: "متوسط",
+
+        advanced: "متقدم"
+
+    };
+
+
+    return levels[level] || "مبتدئ";
+
+}
+
+
+function updateLevel() {
+
+    userData.level =
+        Math.floor(
+            userData.xp / 500
+        ) + 1;
+
+}
+
+
+/* =========================================
+   LESSON COMPLETION
+========================================= */
+
+function completeLesson() {
+
+    userData.xp += 50;
+
+    updateLevel();
+
+    saveUser();
+
+    updateStats();
+
+    showToast(
+        language === "ar"
+            ? "أحسنت! حصلت على +50 XP 🎉"
+            : "Great job! You earned +50 XP 🎉"
+    );
+
+}
+
+
+/* =========================================
+   STATS
+========================================= */
+
+function updateStats() {
+
+    const elements = {
+
+        dashboardXP:
+            userData.xp,
+
+        dashboardStreak:
+            userData.streak,
+
+        dashboardLevel:
+            userData.level,
+
+        dashboardProgress:
+            `${Math.min(
+                100,
+                userData.xp % 100
+            )}%`,
+
+        profileXP:
+            userData.xp,
+
+        profileLevel:
+            userData.level,
+
+        profileStreak:
+            userData.streak,
+
+        friendXP:
+            `${userData.xp} XP`,
+
+        friendStreak:
+            userData.streak,
+
+        sideStreak:
+            userData.streak
+
+    };
+
+
+    Object.entries(elements)
+        .forEach(
+            ([id, value]) => {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if (element) {
+
+                    element.textContent =
+                        value;
+
+                }
+
+            }
+        );
+
+
+    const progress =
+        Math.min(
+            100,
+            userData.xp % 100
+        );
+
+
+    const bar =
+        document.getElementById(
+            "learnProgressBar"
+        );
+
+
+    const progressText =
+        document.getElementById(
+            "learnProgressText"
+        );
+
+
+    if (bar) {
+
+        bar.style.width =
+            `${progress}%`;
+
+    }
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            language === "ar"
+                ? `${progress}% مكتمل`
+                : `${progress}% complete`;
+
+    }
+
+}
+
+
+/* =========================================
+   STREAK
+========================================= */
+
+function updateStreak() {
+
+    const today =
+        new Date().toDateString();
+
+
+    const lastVisit =
+        localStorage.getItem(
+            "faseehLastVisit"
+        );
+
+
+    if (lastVisit !== today) {
+
+        userData.streak++;
+
+        localStorage.setItem(
+            "faseehLastVisit",
+            today
+        );
+
+
+        saveUser();
+
+    }
+
+}
+
+
+/* =========================================
+   PROFILE GOALS
+========================================= */
+
+function updateProfileGoals() {
+
+    const container =
+        document.getElementById(
+            "profileGoals"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML = "";
+
+
+    userData.profile.skills
+        .forEach(
+            skill => {
+
+                const lesson =
+                    lessonData[skill];
+
+
+                if (!lesson) return;
+
+
+                const tag =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                tag.textContent =
+                    language === "ar"
+                        ? lesson.ar
+                        : lesson.en;
+
+
+                container.appendChild(
+                    tag
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================
+   PERSONALIZATION MESSAGE
+========================================= */
+
+function updatePersonalization() {
+
+    const hero =
+        document.getElementById(
+            "heroDescription"
+        );
+
+
+    const dailyTitle =
+        document.getElementById(
+            "dailyTitle"
+        );
+
+
+    const dailyDescription =
+        document.getElementById(
+            "dailyDescription"
+        );
+
+
+    if (
+        userData.profile.background ===
+        "arab"
+    ) {
+
+        if (language === "ar") {
+
+            hero.textContent =
+                "تم تصميم هذا المسار بناءً على مستواك وأهدافك.";
+
+            dailyTitle.textContent =
+                "أكمل درسًا واحدًا اليوم";
+
+            dailyDescription.textContent =
+                "حافظ على تقدمك واحصل على 50 XP.";
+
+        }
+
+    } else {
+
+        if (language === "en") {
+
+            hero.textContent =
+                "Your path is personalized to your Arabic level and goals.";
+
+            dailyTitle.textContent =
+                "Complete one lesson today";
+
+            dailyDescription.textContent =
+                "Keep learning and earn 50 XP.";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   TOAST
+========================================= */
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    if (!toast) return;
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+
+}
+
+
+/* =========================================
+   AI TUTOR PROTOTYPE
+========================================= */
+
+function sendMessage() {
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
 
     const messages =
         document.getElementById(
@@ -1119,17 +1341,35 @@ function addMessage(
         );
 
 
-    const message =
-        document.createElement("div");
+    if (!input || !messages) return;
 
 
-    message.className =
-        `chat-message ${type}`;
+    const text =
+        input.value.trim();
 
 
-    message.innerHTML = `
+    if (!text) return;
 
-        <span>ف</span>
+
+    /*
+        For now this is a prototype.
+        Real AI API can be connected later.
+    */
+
+
+    const userMessage =
+        document.createElement(
+            "div"
+        );
+
+
+    userMessage.className =
+        "chat-message user";
+
+
+    userMessage.innerHTML = `
+
+        <span>YOU</span>
 
         <p>
             ${escapeHTML(text)}
@@ -1139,173 +1379,379 @@ function addMessage(
 
 
     messages.appendChild(
-        message
+        userMessage
     );
 
 
-    messages.scrollTop =
-        messages.scrollHeight;
-}
+    input.value = "";
 
 
-function getAIResponse(text) {
+    setTimeout(
+        () => {
 
-    const lower =
-        text.toLowerCase();
-
-
-    if (
-        lower.includes("grammar") ||
-        lower.includes("قواعد")
-    ) {
-
-        return "Of course! Arabic grammar becomes easier when we break it into small steps. Start by identifying the subject, verb, and object in a sentence.";
-
-    }
+            const aiMessage =
+                document.createElement(
+                    "div"
+                );
 
 
-    if (
-        lower.includes("word") ||
-        lower.includes("كلمة")
-    ) {
-
-        return "Sure! Send me the Arabic word and I can explain its meaning, pronunciation, and how to use it in a sentence.";
-
-    }
+            aiMessage.className =
+                "chat-message ai";
 
 
-    if (
-        lower.includes("conversation") ||
-        lower.includes("محادثة")
-    ) {
+            aiMessage.innerHTML = `
 
-        return "Let's practice! أنا فصيح. كيف حالك اليوم؟";
+                <span>ف</span>
 
-    }
+                <p>
+                    ${
+                        language === "ar"
+                            ? "رائع! يمكنني مساعدتك في تعلّم العربية. سيتم ربط فصيح بالذكاء الاصطناعي الحقيقي لاحقًا."
+                            : "Great question! Faseeh can help you practice Arabic. The real AI tutor will be connected later."
+                    }
+                </p>
 
-
-    return "Great question! I'm here to help you understand Arabic step by step. The full Faseeh AI Tutor will be connected to a real AI system later.";
-
-}
-
-
-function escapeHTML(text) {
-
-    return text
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+            `;
 
 
-/* =========================================
-   VIDEO BUTTONS
-========================================= */
-
-function setupVideos() {
-
-    document
-        .querySelectorAll(".play-button")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    showToast(
-                        "Video lessons will be connected here."
-                    );
-
-                }
+            messages.appendChild(
+                aiMessage
             );
 
-        });
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
+        },
+        500
+    );
+
 }
 
 
-/* =========================================
-   PLANS
-========================================= */
-
-function setupPlans() {
-
-    document
-        .querySelectorAll("[data-plan]")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const plan =
-                        button.dataset.plan;
+document
+    .getElementById("sendMessage")
+    ?.addEventListener(
+        "click",
+        sendMessage
+    );
 
 
-                    user.plan =
-                        plan;
+document
+    .getElementById("messageInput")
+    ?.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                sendMessage();
+
+            }
+
+        }
+    );
 
 
-                    saveUser();
+/* QUICK PROMPTS */
 
+document
+    .querySelectorAll(
+        "[data-prompt]"
+    )
+    .forEach(button => {
 
-                    showToast(
-                        `${plan} selected — payments will be connected later.`
+        button.addEventListener(
+            "click",
+            () => {
+
+                const input =
+                    document.getElementById(
+                        "messageInput"
                     );
 
-                }
-            );
 
-        });
-}
+                if (!input) return;
+
+
+                input.value =
+                    button.dataset.prompt;
+
+
+                input.focus();
+
+            }
+        );
+
+    });
 
 
 /* =========================================
-   LANGUAGE
+   GAMES
 ========================================= */
 
-function toggleLanguage() {
+document
+    .querySelectorAll(
+        "[data-game]"
+    )
+    .forEach(button => {
 
-    const isArabic =
-        document.body.classList.toggle(
-            "rtl"
+        button.addEventListener(
+            "click",
+            () => {
+
+                const game =
+                    button.dataset.game;
+
+
+                playGame(
+                    game
+                );
+
+            }
+        );
+
+    });
+
+
+function playGame(game) {
+
+    const gameArea =
+        document.getElementById(
+            "gameArea"
         );
 
 
-    document.documentElement.lang =
-        isArabic
-            ? "ar"
-            : "en";
+    if (!gameArea) return;
 
 
-    const text =
-        isArabic
-            ? "English"
-            : "العربية";
-
-
-    document
-        .getElementById(
-            "languageButton"
-        )
-        .textContent =
-        text;
-
-
-    document
-        .getElementById(
-            "topLanguage"
-        )
-        .textContent =
-        text;
-
-
-    showToast(
-        isArabic
-            ? "Arabic layout enabled."
-            : "English layout enabled."
+    gameArea.classList.remove(
+        "hidden"
     );
+
+
+    let question = "";
+
+
+    if (game === "word") {
+
+        question =
+            language === "ar"
+                ? "اختر معنى كلمة «كتاب»: 📖"
+                : "What does «كتاب» mean? 📖";
+
+    }
+
+
+    if (game === "grammar") {
+
+        question =
+            language === "ar"
+                ? "أي جملة صحيحة؟"
+                : "Which sentence is correct?";
+
+    }
+
+
+    if (game === "listening") {
+
+        question =
+            language === "ar"
+                ? "🎧 استمع واختر معنى «صباح الخير»."
+                : "🎧 Choose the meaning of «صباح الخير».";
+
+    }
+
+
+    gameArea.innerHTML = `
+
+        <h2>
+            ${question}
+        </h2>
+
+        <button class="primary-button game-answer">
+            ${
+                language === "ar"
+                    ? "الإجابة الصحيحة"
+                    : "Correct Answer"
+            }
+        </button>
+
+    `;
+
+
+    gameArea
+        .querySelector(".game-answer")
+        .addEventListener(
+            "click",
+            () => {
+
+                userData.xp += 25;
+
+                updateLevel();
+
+                saveUser();
+
+                updateStats();
+
+
+                showToast(
+                    language === "ar"
+                        ? "أحسنت! +25 XP 🎮"
+                        : "Nice! +25 XP 🎮"
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================
+   PREMIUM / PLATINUM
+========================================= */
+
+document
+    .querySelectorAll(
+        ".plan-button"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const plan =
+                    button.dataset.plan;
+
+
+                choosePlan(
+                    plan
+                );
+
+            }
+        );
+
+    });
+
+
+function choosePlan(plan) {
+
+    userData.plan =
+        plan;
+
+
+    saveUser();
+
+
+    if (plan === "Premium") {
+
+        showToast(
+            language === "ar"
+                ? "أساسية — 14.99 درهم شهريًا. الدفع سيتم ربطه لاحقًا."
+                : "Premium — 14.99 AED/month. Payments will be connected later."
+        );
+
+    }
+
+
+    if (plan === "Platinum") {
+
+        showToast(
+            language === "ar"
+                ? "مميزة — 24.99 درهم شهريًا. الدفع سيتم ربطه لاحقًا."
+                : "Platinum — 24.99 AED/month. Payments will be connected later."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   PREMIUM FEATURE BUTTONS
+========================================= */
+
+document
+    .querySelectorAll(
+        "[data-plan-feature]"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const requiredPlan =
+                    button.dataset.planFeature;
+
+
+                if (
+                    requiredPlan === "premium" &&
+                    (
+                        userData.plan === "Premium" ||
+                        userData.plan === "Platinum"
+                    )
+                ) {
+
+                    showToast(
+                        language === "ar"
+                            ? "تم فتح Smart Review!"
+                            : "Smart Review is unlocked!"
+                    );
+
+                    return;
+                }
+
+
+                showToast(
+                    language === "ar"
+                        ? "هذه الميزة متاحة في أساسية ومميزة."
+                        : "This feature is available in Premium and Platinum."
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   SECURITY / HTML ESCAPE
+========================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+function saveUser() {
+
+    localStorage.setItem(
+        "faseehUser",
+        JSON.stringify(
+            userData
+        )
+    );
+
 }
 
 
@@ -1313,67 +1759,60 @@ function toggleLanguage() {
    START APP
 ========================================= */
 
-function startApp() {
+updateStreak();
 
-    updateStreak();
+updateLevel();
 
-    setupSurvey();
 
-    setupNavigation();
-
-    setupGames();
-
-    setupTutor();
-
-    setupVideos();
-
-    setupPlans();
+if (
+    userData.surveyCompleted
+) {
 
     document
-        .getElementById(
-            "languageButton"
-        )
-        .addEventListener(
-            "click",
-            toggleLanguage
-        );
+        .getElementById("onboarding")
+        .classList.add("hidden");
 
 
     document
-        .getElementById(
-            "topLanguage"
-        )
-        .addEventListener(
-            "click",
-            toggleLanguage
-        );
+        .getElementById("app")
+        .classList.remove("hidden");
 
 
-    if (user.surveyCompleted) {
+    /*
+        Make sure Arab users
+        are ALWAYS Arabic-only.
+    */
 
-        document
-            .getElementById(
-                "onboarding"
-            )
-            .classList.add("hidden");
+    if (
+        userData.profile.background ===
+        "arab"
+    ) {
 
+        language = "ar";
 
-        document
-            .getElementById(
-                "app"
-            )
-            .classList.remove("hidden");
+        userData.language = "ar";
 
-
-        buildLearningPath();
-
-        updateInterface();
+        saveUser();
 
     }
 
+
+    updateText();
+
+    updateLanguageButtons();
+
+    updateStats();
+
+    createLearningPath();
+
+    updateProfileGoals();
+
+    updatePersonalization();
+
+    showPage("dashboard");
+
+} else {
+
+    showSurveyStep(1);
+
 }
-
-
-/* RUN */
-
-startApp();
