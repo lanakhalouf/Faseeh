@@ -6,417 +6,560 @@
 
     <title>Faseeh | فصيح</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
+<div id="toast" class="toast"></div>
 
-        <div class="logo">
-            فصيح
+<!-- =========================
+     ONBOARDING
+========================= -->
+
+<section id="onboarding" class="onboarding">
+
+    <div class="onboarding-card">
+
+        <div class="brand-large">
+            <div class="brand-mark">ف</div>
+
+            <div>
+                <strong>فصيح</strong>
+                <span>FASEEΗ</span>
+            </div>
         </div>
 
-        <div class="nav-links">
-            <button onclick="showPage('home')" data-en="Home" data-ar="الرئيسية">Home</button>
-            <button onclick="showPage('learn')" data-en="Learn" data-ar="تعلّم">Learn</button>
-            <button onclick="showPage('games')" data-en="Games" data-ar="الألعاب">Games</button>
-            <button onclick="showPage('friends')" data-en="Friends" data-ar="الأصدقاء">Friends</button>
-            <button onclick="showPage('profile')" data-en="Profile" data-ar="الملف الشخصي">Profile</button>
+        <div class="onboarding-progress">
+            <span id="progressBar"></span>
         </div>
 
-        <button class="language-btn" onclick="toggleLanguage()">
-            العربية
-        </button>
+        <!-- STEP 1 -->
+        <div class="survey-step active" data-step="1">
 
-    </nav>
+            <p class="eyebrow">WELCOME TO FASEEH</p>
 
+            <h1>Let's personalize<br>your Arabic journey.</h1>
 
-    <!-- HOME -->
-    <section id="home" class="page active">
+            <p class="survey-description">
+                Tell us a little about yourself so we can create lessons that fit you.
+            </p>
 
-        <div class="hero">
+            <div class="choices two">
 
-            <div class="hero-text">
+                <button class="choice" data-question="background" data-value="arab">
+                    <span class="choice-icon">🌍</span>
+                    <strong>I'm Arab</strong>
+                    <small>I want to improve my Arabic.</small>
+                </button>
 
-                <span class="badge" data-en="Learn Arabic Your Way" data-ar="تعلّم العربية بطريقتك">
-                    Learn Arabic Your Way
-                </span>
-
-                <h1 data-en="Arabic learning made personal."
-                    data-ar="تعلّم العربية بطريقة تناسبك.">
-                    Arabic learning made personal.
-                </h1>
-
-                <p data-en="Faseeh creates a personalized Arabic learning experience based on your level, goals, and interests."
-                   data-ar="فصيح ينشئ لك تجربة تعليمية مخصصة بناءً على مستواك وأهدافك واهتماماتك.">
-                    Faseeh creates a personalized Arabic learning experience based on your level, goals, and interests.
-                </p>
-
-                <button class="primary-btn" onclick="showPage('survey')"
-                        data-en="Start Your Journey"
-                        data-ar="ابدأ رحلتك">
-                    Start Your Journey
+                <button class="choice" data-question="background" data-value="nonarab">
+                    <span class="choice-icon">🌎</span>
+                    <strong>I'm not Arab</strong>
+                    <small>I want to learn Arabic.</small>
                 </button>
 
             </div>
 
-            <div class="hero-card">
-
-                <div class="streak">
-                    🔥 <span id="heroStreak">0</span>
-                    <span data-en="day streak" data-ar="أيام متتالية">day streak</span>
-                </div>
-
-                <div class="xp">
-                    ⭐ <span id="heroXP">0</span> XP
-                </div>
-
-                <div class="level">
-                    Level <span id="heroLevel">1</span>
-                </div>
-
-            </div>
-
         </div>
 
 
-        <div class="section-title">
+        <!-- STEP 2 -->
+        <div class="survey-step" data-step="2">
 
-            <h2 data-en="Why Faseeh?" data-ar="لماذا فصيح؟">
-                Why Faseeh?
-            </h2>
+            <p class="eyebrow">YOUR EDUCATION</p>
 
-            <p data-en="Everything you need to improve your Arabic."
-               data-ar="كل ما تحتاجه لتطوير لغتك العربية.">
-                Everything you need to improve your Arabic.
+            <h1>What level are<br>you studying at?</h1>
+
+            <p class="survey-description">
+                We'll adjust the difficulty of your lessons.
             </p>
 
-        </div>
+            <div class="choices three">
 
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-                <div class="icon">🎯</div>
-                <h3 data-en="Personalized" data-ar="مخصص">Personalized</h3>
-                <p data-en="Your learning path changes based on your answers."
-                   data-ar="مسارك التعليمي يتغير بناءً على إجاباتك.">
-                    Your learning path changes based on your answers.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">📱</div>
-                <h3 data-en="Short Lessons" data-ar="دروس قصيرة">Short Lessons</h3>
-                <p data-en="Learn Arabic through short, engaging lessons."
-                   data-ar="تعلّم العربية من خلال دروس قصيرة وممتعة.">
-                    Learn Arabic through short, engaging lessons.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">🤖</div>
-                <h3 data-en="AI Tutor" data-ar="مدرس ذكي">AI Tutor</h3>
-                <p data-en="Ask Faseeh whenever you need help."
-                   data-ar="اسأل فصيح عندما تحتاج إلى المساعدة.">
-                    Ask Faseeh whenever you need help.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">🔥</div>
-                <h3 data-en="Stay Motivated" data-ar="استمر في التعلّم">Stay Motivated</h3>
-                <p data-en="Earn XP, build streaks, and level up."
-                   data-ar="اجمع نقاط XP وحافظ على تقدمك وارتقِ بالمستويات.">
-                    Earn XP, build streaks, and level up.
-                </p>
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- SURVEY -->
-    <section id="survey" class="page">
-
-        <div class="page-container">
-
-            <h1 data-en="Tell us about yourself"
-                data-ar="أخبرنا عن نفسك">
-                Tell us about yourself
-            </h1>
-
-            <p data-en="Your answers help Faseeh create your learning path."
-               data-ar="إجاباتك تساعد فصيح على إنشاء مسارك التعليمي.">
-                Your answers help Faseeh create your learning path.
-            </p>
-
-
-            <form id="surveyForm">
-
-                <div class="question">
-
-                    <h3 data-en="What is your background?"
-                        data-ar="ما خلفيتك؟">
-                        What is your background?
-                    </h3>
-
-                    <label>
-                        <input type="radio" name="background" value="arab">
-                        <span data-en="Arab" data-ar="عربي">Arab</span>
-                    </label>
-
-                    <label>
-                        <input type="radio" name="background" value="nonarab">
-                        <span data-en="Non-Arab" data-ar="غير عربي">Non-Arab</span>
-                    </label>
-
-                </div>
-
-
-                <div class="question">
-
-                    <h3 data-en="What is your education level?"
-                        data-ar="ما مستواك الدراسي؟">
-                        What is your education level?
-                    </h3>
-
-                    <label>
-                        <input type="radio" name="education" value="middle">
-                        <span data-en="Middle School" data-ar="المرحلة المتوسطة">Middle School</span>
-                    </label>
-
-                    <label>
-                        <input type="radio" name="education" value="high">
-                        <span data-en="High School" data-ar="المرحلة الثانوية">High School</span>
-                    </label>
-
-                    <label>
-                        <input type="radio" name="education" value="none">
-                        <span data-en="Not in School" data-ar="غير ملتحق بالمدرسة">Not in School</span>
-                    </label>
-
-                </div>
-
-
-                <div class="question">
-
-                    <h3 data-en="What is your Arabic level?"
-                        data-ar="ما مستواك في اللغة العربية؟">
-                        What is your Arabic level?
-                    </h3>
-
-                    <label>
-                        <input type="radio" name="level" value="beginner">
-                        <span data-en="Beginner" data-ar="مبتدئ">Beginner</span>
-                    </label>
-
-                    <label>
-                        <input type="radio" name="level" value="intermediate">
-                        <span data-en="Intermediate" data-ar="متوسط">Intermediate</span>
-                    </label>
-
-                    <label>
-                        <input type="radio" name="level" value="advanced">
-                        <span data-en="Advanced" data-ar="متقدم">Advanced</span>
-                    </label>
-
-                </div>
-
-
-                <div class="question">
-
-                    <h3 data-en="What do you want to improve?"
-                        data-ar="ماذا تريد أن تطور؟">
-                        What do you want to improve?
-                    </h3>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="speaking">
-                        <span data-en="Speaking" data-ar="المحادثة">Speaking</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="writing">
-                        <span data-en="Writing" data-ar="الكتابة">Writing</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="reading">
-                        <span data-en="Reading" data-ar="القراءة">Reading</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="listening">
-                        <span data-en="Listening" data-ar="الاستماع">Listening</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="grammar">
-                        <span data-en="Grammar" data-ar="القواعد">Grammar</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="vocabulary">
-                        <span data-en="Vocabulary" data-ar="المفردات">Vocabulary</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="expression">
-                        <span data-en="Expression" data-ar="التعبير">Expression</span>
-                    </label>
-
-                    <label>
-                        <input type="checkbox" name="skill" value="literature">
-                        <span data-en="Literature" data-ar="الأدب">Literature</span>
-                    </label>
-
-                </div>
-
-
-                <button type="submit" class="primary-btn"
-                        data-en="Create My Learning Path"
-                        data-ar="أنشئ مساري التعليمي">
-                    Create My Learning Path
+                <button class="choice" data-question="education" data-value="middle">
+                    <span class="choice-icon">📘</span>
+                    <strong>Middle School</strong>
+                    <small>Grades 6–9</small>
                 </button>
 
-            </form>
+                <button class="choice" data-question="education" data-value="high">
+                    <span class="choice-icon">🎓</span>
+                    <strong>High School</strong>
+                    <small>Grades 10–12</small>
+                </button>
+
+                <button class="choice" data-question="education" data-value="none">
+                    <span class="choice-icon">🌱</span>
+                    <strong>Not in School</strong>
+                    <small>Learn at my own pace</small>
+                </button>
+
+            </div>
 
         </div>
 
-    </section>
+
+        <!-- STEP 3 -->
+        <div class="survey-step" data-step="3">
+
+            <p class="eyebrow">YOUR ARABIC</p>
+
+            <h1>How would you<br>describe your level?</h1>
+
+            <p class="survey-description">
+                Don't worry — you can change this later.
+            </p>
+
+            <div class="choices three">
+
+                <button class="choice" data-question="level" data-value="beginner">
+                    <span class="choice-icon">🌱</span>
+                    <strong>Beginner</strong>
+                    <small>I'm just starting.</small>
+                </button>
+
+                <button class="choice" data-question="level" data-value="intermediate">
+                    <span class="choice-icon">🚀</span>
+                    <strong>Intermediate</strong>
+                    <small>I know the basics.</small>
+                </button>
+
+                <button class="choice" data-question="level" data-value="advanced">
+                    <span class="choice-icon">🏆</span>
+                    <strong>Advanced</strong>
+                    <small>I want to master it.</small>
+                </button>
+
+            </div>
+
+        </div>
 
 
-    <!-- LEARN -->
-    <section id="learn" class="page">
+        <!-- STEP 4 -->
+        <div class="survey-step" data-step="4">
 
-        <div class="page-container">
+            <p class="eyebrow">YOUR GOALS</p>
 
-            <div class="section-title">
+            <h1>What do you want<br>to improve?</h1>
 
-                <h1 data-en="Your Learning Path"
-                    data-ar="مسارك التعليمي">
-                    Your Learning Path
-                </h1>
+            <p class="survey-description">
+                Choose everything that interests you.
+            </p>
 
-                <p id="learningDescription">
-                    Your personalized lessons will appear here.
-                </p>
+            <div class="goal-grid">
+
+                <button class="goal" data-goal="speaking">🎤 Speaking</button>
+                <button class="goal" data-goal="writing">✍️ Writing</button>
+                <button class="goal" data-goal="reading">📖 Reading</button>
+                <button class="goal" data-goal="listening">🎧 Listening</button>
+                <button class="goal" data-goal="grammar">📝 Grammar</button>
+                <button class="goal" data-goal="vocabulary">📚 Vocabulary</button>
+                <button class="goal" data-goal="expression">💬 Expression</button>
+                <button class="goal" data-goal="literature">📜 Literature</button>
+
+            </div>
+
+            <button id="finishSurvey" class="primary-button full">
+                Create My Learning Path →
+            </button>
+
+        </div>
+
+
+        <div class="survey-footer">
+
+            <button id="backButton" class="back-button hidden">
+                ← Back
+            </button>
+
+            <span id="stepCounter">1 of 4</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MAIN APP
+========================= -->
+
+<div id="app" class="app hidden">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <div class="brand-mark">ف</div>
+
+            <div>
+                <strong>فصيح</strong>
+                <span>FASEEΗ</span>
+            </div>
+
+        </div>
+
+
+        <nav>
+
+            <button class="nav-item active" data-page="dashboard">
+                <span>⌂</span>
+                <label>Dashboard</label>
+            </button>
+
+            <button class="nav-item" data-page="learn">
+                <span>📚</span>
+                <label>Learn</label>
+            </button>
+
+            <button class="nav-item" data-page="feed">
+                <span>▶</span>
+                <label>Short Lessons</label>
+            </button>
+
+            <button class="nav-item" data-page="games">
+                <span>🎮</span>
+                <label>Games</label>
+            </button>
+
+            <button class="nav-item" data-page="friends">
+                <span>👥</span>
+                <label>Friends</label>
+            </button>
+
+            <button class="nav-item" data-page="profile">
+                <span>◎</span>
+                <label>Profile</label>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button id="languageButton" class="language-button">
+                العربية
+            </button>
+
+            <div class="sidebar-streak">
+                <span>🔥</span>
+                <div>
+                    <strong id="sideStreak">0</strong>
+                    <small>day streak</small>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+                <p class="greeting">Good evening, Lana 👋</p>
+                <h2 id="pageHeading">Your Arabic journey</h2>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button id="topLanguage" class="top-language">
+                    العربية
+                </button>
+
+                <button class="notification">
+                    🔔
+                    <span></span>
+                </button>
+
+                <button class="top-avatar" data-page="profile">
+                    L
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================= -->
+
+        <section id="dashboard" class="app-page active-page">
+
+            <div class="welcome-hero">
+
+                <div class="hero-content">
+
+                    <span class="hero-label">YOUR PERSONALIZED PATH</span>
+
+                    <h1>
+                        Keep going.<br>
+                        <span>Your Arabic is growing.</span>
+                    </h1>
+
+                    <p id="heroDescription">
+                        Complete a lesson today and keep your streak alive.
+                    </p>
+
+                    <button class="hero-button" data-page="learn">
+                        Continue Learning →
+                    </button>
+
+                </div>
+
+                <div class="hero-arabic">
+                    فصيح
+                </div>
 
             </div>
 
 
-            <div id="learningPath" class="lesson-grid">
+            <!-- STATS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">⭐</div>
+                    <div>
+                        <strong id="dashboardXP">0</strong>
+                        <span>XP earned</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">🔥</div>
+                    <div>
+                        <strong id="dashboardStreak">0</strong>
+                        <span>Day streak</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">🏆</div>
+                    <div>
+                        <strong id="dashboardLevel">1</strong>
+                        <span>Current level</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">🎯</div>
+                    <div>
+                        <strong id="dashboardProgress">0%</strong>
+                        <span>Daily goal</span>
+                    </div>
+                </div>
 
             </div>
 
 
-            <div class="ai-box">
+            <!-- TODAY -->
+
+            <div class="section-heading">
 
                 <div>
-                    <span class="ai-icon">🤖</span>
+                    <p class="eyebrow">TODAY</p>
+                    <h2>Your learning path</h2>
+                </div>
 
-                    <h2 data-en="Need help?"
-                        data-ar="تحتاج مساعدة؟">
-                        Need help?
-                    </h2>
+                <button class="text-button" data-page="learn">
+                    View all →
+                </button>
 
-                    <p data-en="Ask Faseeh AI Tutor."
-                       data-ar="اسأل مدرس فصيح الذكي.">
-                        Ask Faseeh AI Tutor.
+            </div>
+
+
+            <div id="dashboardLessons" class="lesson-grid"></div>
+
+
+            <!-- DAILY CHALLENGE -->
+
+            <div class="daily-card">
+
+                <div class="daily-icon">🎯</div>
+
+                <div>
+                    <span>DAILY CHALLENGE</span>
+                    <h3>Complete one lesson today</h3>
+                    <p>Keep your streak alive and earn 50 XP.</p>
+                </div>
+
+                <button class="secondary-button" data-page="learn">
+                    Start
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             LEARN
+        ========================= -->
+
+        <section id="learn" class="app-page">
+
+            <div class="page-title">
+
+                <div>
+                    <p class="eyebrow">PERSONALIZED FOR YOU</p>
+                    <h1>Your Learning Path</h1>
+                    <p id="learningSubtitle">
+                        Lessons selected based on your goals.
                     </p>
                 </div>
 
-                <button class="primary-btn" onclick="openTutor()"
-                        data-en="Ask Faseeh"
-                        data-ar="اسأل فصيح">
-                    Ask Faseeh
-                </button>
+            </div>
+
+            <div class="progress-card">
+
+                <div>
+                    <span>YOUR PROGRESS</span>
+                    <strong id="learnProgressText">0% complete</strong>
+                </div>
+
+                <div class="large-progress">
+                    <span id="learnProgressBar"></span>
+                </div>
 
             </div>
 
-        </div>
+            <div id="allLessons" class="lesson-grid large"></div>
 
-    </section>
+        </section>
 
 
-    <!-- AI TUTOR -->
-    <section id="tutor" class="page">
+        <!-- =========================
+             SHORT LESSONS
+        ========================= -->
 
-        <div class="page-container">
+        <section id="feed" class="app-page">
 
-            <h1 data-en="Faseeh AI Tutor"
-                data-ar="مدرس فصيح الذكي">
-                Faseeh AI Tutor
-            </h1>
+            <div class="page-title">
 
-            <div id="chatBox" class="chat-box">
-
-                <div class="message ai-message">
-                    <strong>فصيح:</strong>
-                    <span data-en="Hi! How can I help you learn Arabic?"
-                          data-ar="مرحباً! كيف يمكنني مساعدتك في تعلّم العربية؟">
-                        Hi! How can I help you learn Arabic?
-                    </span>
+                <div>
+                    <p class="eyebrow">LEARN IN MINUTES</p>
+                    <h1>Short Lessons</h1>
+                    <p>Quick Arabic lessons made for your feed.</p>
                 </div>
 
             </div>
 
 
-            <div class="chat-input">
+            <div class="video-grid">
 
-                <input id="chatInput"
-                       type="text"
-                       placeholder="Ask Faseeh something...">
+                <article class="video-card purple-video">
 
-                <button onclick="sendMessage()">➤</button>
+                    <div class="video-symbol">أ</div>
+
+                    <button class="play-button">▶</button>
+
+                    <div class="video-content">
+                        <span>VOCABULARY · 45 SEC</span>
+                        <h2>5 Arabic words you can use today</h2>
+                        <p>Build your everyday vocabulary.</p>
+                    </div>
+
+                </article>
+
+
+                <article class="video-card blue-video">
+
+                    <div class="video-symbol">ن</div>
+
+                    <button class="play-button">▶</button>
+
+                    <div class="video-content">
+                        <span>GRAMMAR · 60 SEC</span>
+                        <h2>Understanding Arabic sentence structure</h2>
+                        <p>A simple grammar explanation.</p>
+                    </div>
+
+                </article>
+
+
+                <article class="video-card green-video">
+
+                    <div class="video-symbol">م</div>
+
+                    <button class="play-button">▶</button>
+
+                    <div class="video-content">
+                        <span>SPEAKING · 50 SEC</span>
+                        <h2>Sound more natural in Arabic</h2>
+                        <p>Useful phrases for conversations.</p>
+                    </div>
+
+                </article>
+
+
+                <article class="video-card dark-video">
+
+                    <div class="video-symbol">ق</div>
+
+                    <button class="play-button">▶</button>
+
+                    <div class="video-content">
+                        <span>READING · 55 SEC</span>
+                        <h2>Read this Arabic sentence</h2>
+                        <p>Practice reading with Faseeh.</p>
+                    </div>
+
+                </article>
 
             </div>
 
-            <p class="demo-note"
-               data-en="AI Tutor is currently a prototype. A real AI API will be connected later."
-               data-ar="مدرس فصيح حالياً نموذج أولي. سيتم ربط الذكاء الاصطناعي الحقيقي لاحقاً.">
-                AI Tutor is currently a prototype. A real AI API will be connected later.
-            </p>
-
-        </div>
-
-    </section>
+        </section>
 
 
-    <!-- GAMES -->
-    <section id="games" class="page">
+        <!-- =========================
+             GAMES
+        ========================= -->
 
-        <div class="page-container">
+        <section id="games" class="app-page">
 
-            <h1 data-en="Daily Games"
-                data-ar="الألعاب اليومية">
-                Daily Games
-            </h1>
+            <div class="page-title">
+
+                <div>
+                    <p class="eyebrow">LEARN · PLAY · REPEAT</p>
+                    <h1>Daily Games</h1>
+                    <p>Practice Arabic while earning XP.</p>
+                </div>
+
+            </div>
+
 
             <div class="game-grid">
 
                 <div class="game-card">
 
-                    <div class="game-icon">🧩</div>
+                    <div class="game-card-icon purple">🧩</div>
 
-                    <h2 data-en="Word Match"
-                        data-ar="مطابقة الكلمات">
-                        Word Match
-                    </h2>
+                    <span class="game-tag">VOCABULARY</span>
 
-                    <p data-en="Match Arabic words with their meanings."
-                       data-ar="طابق الكلمات العربية مع معانيها.">
-                        Match Arabic words with their meanings.
+                    <h2>Word Match</h2>
+
+                    <p>
+                        Match Arabic words with their English meanings.
                     </p>
 
-                    <button class="primary-btn" onclick="playGame()"
-                            data-en="Play"
-                            data-ar="العب">
-                        Play
+                    <button class="primary-button game-button" data-game="word">
+                        Play Game →
                     </button>
 
                 </div>
@@ -424,22 +567,18 @@
 
                 <div class="game-card">
 
-                    <div class="game-icon">📝</div>
+                    <div class="game-card-icon blue">📝</div>
 
-                    <h2 data-en="Grammar Challenge"
-                        data-ar="تحدي القواعد">
-                        Grammar Challenge
-                    </h2>
+                    <span class="game-tag">GRAMMAR</span>
 
-                    <p data-en="Test your Arabic grammar."
-                       data-ar="اختبر معلوماتك في القواعد العربية.">
-                        Test your Arabic grammar.
+                    <h2>Grammar Challenge</h2>
+
+                    <p>
+                        Test yourself with quick Arabic grammar questions.
                     </p>
 
-                    <button class="primary-btn" onclick="playGame()"
-                            data-en="Play"
-                            data-ar="العب">
-                        Play
+                    <button class="primary-button game-button" data-game="grammar">
+                        Play Game →
                     </button>
 
                 </div>
@@ -447,244 +586,346 @@
 
                 <div class="game-card">
 
-                    <div class="game-icon">🎧</div>
+                    <div class="game-card-icon green">🎧</div>
 
-                    <h2 data-en="Listening"
-                        data-ar="الاستماع">
-                        Listening
-                    </h2>
+                    <span class="game-tag">LISTENING</span>
 
-                    <p data-en="Listen and choose the correct answer."
-                       data-ar="استمع واختر الإجابة الصحيحة.">
-                        Listen and choose the correct answer.
+                    <h2>Listen & Choose</h2>
+
+                    <p>
+                        Listen to a phrase and choose what it means.
                     </p>
 
-                    <button class="primary-btn" onclick="playGame()"
-                            data-en="Play"
-                            data-ar="العب">
-                        Play
+                    <button class="primary-button game-button" data-game="listening">
+                        Play Game →
                     </button>
 
                 </div>
 
             </div>
 
-        </div>
 
-    </section>
+            <div id="gameArea" class="game-area hidden"></div>
+
+        </section>
 
 
-    <!-- FRIENDS -->
-    <section id="friends" class="page">
+        <!-- =========================
+             TUTOR
+        ========================= -->
 
-        <div class="page-container">
+        <section id="tutor" class="app-page">
 
-            <h1 data-en="Friends"
-                data-ar="الأصدقاء">
-                Friends
-            </h1>
+            <div class="page-title">
 
-            <div class="friends-box">
+                <div>
+                    <p class="eyebrow">YOUR AI LEARNING PARTNER</p>
+                    <h1>Faseeh AI Tutor</h1>
+                    <p>Ask questions, practice Arabic, and get explanations.</p>
+                </div>
 
-                <div class="friend">
+            </div>
 
-                    <div class="avatar">A</div>
+
+            <div class="tutor-container">
+
+                <div class="tutor-header">
+
+                    <div class="ai-avatar">ف</div>
 
                     <div>
-                        <h3>Ahmed</h3>
-                        <p>🔥 12 day streak</p>
+                        <strong>Faseeh AI</strong>
+                        <span>Arabic learning assistant</span>
                     </div>
 
-                    <strong>2,430 XP</strong>
+                    <div class="online-status">
+                        <i></i> Online
+                    </div>
 
                 </div>
 
 
-                <div class="friend">
+                <div id="messages" class="messages">
 
-                    <div class="avatar">S</div>
-
-                    <div>
-                        <h3>Sarah</h3>
-                        <p>🔥 8 day streak</p>
+                    <div class="chat-message ai">
+                        <span>ف</span>
+                        <p>
+                            Hi! I'm Faseeh. Ask me anything about Arabic. 😊
+                        </p>
                     </div>
-
-                    <strong>1,980 XP</strong>
 
                 </div>
 
 
-                <button class="secondary-btn"
-                        data-en="+ Add Friend"
-                        data-ar="+ إضافة صديق">
+                <div class="quick-prompts">
+
+                    <button data-prompt="Explain this Arabic word to me.">
+                        Explain a word
+                    </button>
+
+                    <button data-prompt="Help me practice Arabic grammar.">
+                        Practice grammar
+                    </button>
+
+                    <button data-prompt="Give me a short Arabic conversation.">
+                        Practice conversation
+                    </button>
+
+                </div>
+
+
+                <div class="chat-form">
+
+                    <input
+                        id="messageInput"
+                        type="text"
+                        placeholder="Ask Faseeh something..."
+                    >
+
+                    <button id="sendMessage">
+                        ↑
+                    </button>
+
+                </div>
+
+                <small class="prototype-note">
+                    AI Tutor prototype — real AI will be connected later.
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FRIENDS
+        ========================= -->
+
+        <section id="friends" class="app-page">
+
+            <div class="page-title">
+
+                <div>
+                    <p class="eyebrow">LEARN TOGETHER</p>
+                    <h1>Friends</h1>
+                    <p>See how your friends are progressing.</p>
+                </div>
+
+                <button class="primary-button">
                     + Add Friend
                 </button>
 
             </div>
 
-        </div>
 
-    </section>
+            <div class="friends-card">
 
-
-    <!-- PROFILE -->
-    <section id="profile" class="page">
-
-        <div class="page-container">
-
-            <h1 data-en="Your Profile"
-                data-ar="ملفك الشخصي">
-                Your Profile
-            </h1>
-
-            <div class="profile-card">
-
-                <div class="big-avatar">
-                    L
+                <div class="friends-header">
+                    <strong>Friends leaderboard</strong>
+                    <span>This week</span>
                 </div>
 
-                <h2>Lana</h2>
 
-                <p data-en="Arabic learner"
-                   data-ar="متعلم للغة العربية">
-                    Arabic learner
-                </p>
+                <div class="friend-row">
 
+                    <div class="rank">1</div>
+                    <div class="friend-avatar pink">A</div>
 
-                <div class="stats">
-
-                    <div>
-                        <strong id="profileXP">0</strong>
-                        <span>XP</span>
+                    <div class="friend-info">
+                        <strong>Ahmed</strong>
+                        <span>🔥 12 day streak</span>
                     </div>
 
-                    <div>
-                        <strong id="profileLevel">1</strong>
-                        <span data-en="Level" data-ar="المستوى">Level</span>
+                    <strong class="friend-xp">2,430 XP</strong>
+
+                </div>
+
+
+                <div class="friend-row">
+
+                    <div class="rank">2</div>
+                    <div class="friend-avatar purple">S</div>
+
+                    <div class="friend-info">
+                        <strong>Sarah</strong>
+                        <span>🔥 8 day streak</span>
                     </div>
 
+                    <strong class="friend-xp">1,980 XP</strong>
+
+                </div>
+
+
+                <div class="friend-row you">
+
+                    <div class="rank">3</div>
+                    <div class="friend-avatar">L</div>
+
+                    <div class="friend-info">
+                        <strong>Lana <small>YOU</small></strong>
+                        <span>🔥 <span id="friendStreak">0</span> day streak</span>
+                    </div>
+
+                    <strong class="friend-xp" id="friendXP">0 XP</strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PROFILE
+        ========================= -->
+
+        <section id="profile" class="app-page">
+
+            <div class="page-title">
+
+                <div>
+                    <p class="eyebrow">YOUR ACCOUNT</p>
+                    <h1>Your Profile</h1>
+                </div>
+
+            </div>
+
+
+            <div class="profile-layout">
+
+                <div class="profile-main-card">
+
+                    <div class="profile-avatar">L</div>
+
+                    <h2>Lana</h2>
+
+                    <p>Arabic learner</p>
+
+                    <div class="profile-stat-row">
+
+                        <div>
+                            <strong id="profileXP">0</strong>
+                            <span>XP</span>
+                        </div>
+
+                        <div>
+                            <strong id="profileLevel">1</strong>
+                            <span>Level</span>
+                        </div>
+
+                        <div>
+                            <strong id="profileStreak">0</strong>
+                            <span>Streak</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-goals">
+
+                        <h3>Your goals</h3>
+
+                        <div id="profileGoals" class="goal-tags">
+                            <span>Choose goals in your survey</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="plans-section">
+
                     <div>
-                        <strong id="profileStreak">0</strong>
-                        <span data-en="Day Streak" data-ar="أيام متتالية">Day Streak</span>
+                        <p class="eyebrow">FASEEH PLANS</p>
+                        <h2>Choose your plan</h2>
+                        <p>Start free and upgrade when you're ready.</p>
+                    </div>
+
+
+                    <div class="plans">
+
+                        <div class="plan-card">
+
+                            <span class="plan-name">BASIC</span>
+
+                            <h2>Free</h2>
+
+                            <p>Everything you need to start learning.</p>
+
+                            <ul>
+                                <li>✓ Personalized learning path</li>
+                                <li>✓ Short lessons</li>
+                                <li>✓ Daily games</li>
+                                <li>✓ XP & streaks</li>
+                            </ul>
+
+                            <button class="secondary-button full">
+                                Current Plan
+                            </button>
+
+                        </div>
+
+
+                        <div class="plan-card featured">
+
+                            <div class="popular">MOST POPULAR</div>
+
+                            <span class="plan-name">PREMIUM</span>
+
+                            <h2>$4.99 <small>/ month</small></h2>
+
+                            <p>More practice and unlimited AI support.</p>
+
+                            <ul>
+                                <li>✓ Everything in Basic</li>
+                                <li>✓ Unlimited AI Tutor</li>
+                                <li>✓ More lessons</li>
+                                <li>✓ Advanced exercises</li>
+                            </ul>
+
+                            <button class="primary-button full" data-plan="Premium">
+                                Choose Premium
+                            </button>
+
+                        </div>
+
+
+                        <div class="plan-card">
+
+                            <span class="plan-name">PLATINUM</span>
+
+                            <h2>$9.99 <small>/ month</small></h2>
+
+                            <p>The complete Arabic learning experience.</p>
+
+                            <ul>
+                                <li>✓ Everything in Premium</li>
+                                <li>✓ Speaking practice</li>
+                                <li>✓ Pronunciation feedback</li>
+                                <li>✓ Advanced AI tutoring</li>
+                            </ul>
+
+                            <button class="primary-button full" data-plan="Platinum">
+                                Choose Platinum
+                            </button>
+
+                        </div>
+
                     </div>
 
                 </div>
 
             </div>
 
+        </section>
 
-            <!-- PLANS -->
+    </main>
 
-            <h2 class="plans-title"
-                data-en="Choose your plan"
-                data-ar="اختر خطتك">
-                Choose your plan
-            </h2>
+</div>
 
 
-            <div class="plans">
-
-                <div class="plan">
-
-                    <h3 data-en="Basic"
-                        data-ar="أساسي">
-                        Basic
-                    </h3>
-
-                    <p class="price">Free</p>
-
-                    <ul>
-                        <li>✓ Personalized path</li>
-                        <li>✓ Short lessons</li>
-                        <li>✓ Games</li>
-                        <li>✓ XP & streaks</li>
-                    </ul>
-
-                    <button class="secondary-btn"
-                            data-en="Current Plan"
-                            data-ar="الخطة الحالية">
-                        Current Plan
-                    </button>
-
-                </div>
-
-
-                <div class="plan featured">
-
-                    <span class="popular"
-                          data-en="Popular"
-                          data-ar="الأكثر شعبية">
-                        Popular
-                    </span>
-
-                    <h3 data-en="Premium"
-                        data-ar="مميز">
-                        Premium
-                    </h3>
-
-                    <p class="price">$4.99<span>/month</span></p>
-
-                    <ul>
-                        <li>✓ Everything in Basic</li>
-                        <li>✓ Unlimited AI Tutor</li>
-                        <li>✓ More lessons</li>
-                        <li>✓ Advanced exercises</li>
-                    </ul>
-
-                    <button class="primary-btn"
-                            onclick="choosePlan('Premium')"
-                            data-en="Choose Premium"
-                            data-ar="اختر مميز">
-                        Choose Premium
-                    </button>
-
-                </div>
-
-
-                <div class="plan">
-
-                    <h3>Platinum</h3>
-
-                    <p class="price">$9.99<span>/month</span></p>
-
-                    <ul>
-                        <li>✓ Everything in Premium</li>
-                        <li>✓ Speaking practice</li>
-                        <li>✓ Pronunciation feedback</li>
-                        <li>✓ Advanced AI tutoring</li>
-                    </ul>
-
-                    <button class="primary-btn"
-                            onclick="choosePlan('Platinum')">
-                        Choose Platinum
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        <div class="logo">فصيح</div>
-
-        <p data-en="Making Arabic easier, smarter, and more interactive."
-           data-ar="لنجعل تعلّم العربية أسهل، أذكى، وأكثر تفاعلاً.">
-            Making Arabic easier, smarter, and more interactive.
-        </p>
-
-        <p>© 2026 Faseeh</p>
-
-    </footer>
-
-
-    <script src="app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
